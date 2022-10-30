@@ -1,0 +1,45 @@
+﻿@model IPagedList<Homework_assignment_6_1._1.Models.order>
+@using PagedList.Mvc;
+@using PagedList;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div class="container" style="padding-left: 0px;">
+    <form class="form-inline">
+        <div class="form-row">
+            <input name="date" type="date" class="form-control" style="margin-top: 5px; margin-bottom: 5px;">
+            <button type="submit" class="btn btn-primary" style="margin-top: 5px; margin-bottom: 5px;"> Search </button>
+        </div>
+    </form>
+</div>
+
+@foreach (var item in Model)
+{
+    <h2> Order @item.order_id - @item.order_date.ToString("dd/MM/yyyy") </h2>
+    <table class="table table-striped">
+        <tr>
+            <th> Product Name </th>
+            <th> List Price </th>
+            <th> Quantity </th>
+            <th> Total </th>
+        </tr>
+        @{decimal totalcount = 0;}
+        @foreach (var product in item.order_items)
+        {
+            <tr>
+                <td> @product.product.product_name </td>
+                <td> @product.product.list_price </td>
+                <td> @product.quantity </td>
+                @{ decimal total = product.product.list_price * product.quantity; totalcount += total; }
+                <td> @total </td>
+            </tr>
+        }
+        <tr><td></td><td></td><th>Grand Total :</th><td> @totalcount </td></tr>
+    </table>
+}
+
+@Html.PagedListPager(Model, i => Url.Action("Index", "Order", new { i, date = Request.QueryString["date"] }))

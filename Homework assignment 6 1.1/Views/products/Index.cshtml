@@ -1,0 +1,102 @@
+﻿@model IPagedList<Homework_assignment_6_1._1.Models.product>
+@using PagedList.Mvc;
+@using PagedList;
+
+@{
+    ViewBag.Title = "Products";
+}
+
+<h2>Index</h2>
+
+<h2>Products</h2>
+
+<div class="container" style="padding-left: 0px;">
+    <form class="form-inline">
+        <div class="form-row">
+            <input name="searchstring" type="text" class="form-control" placeholder="Enter product name..." style="margin-top: 5px; margin-bottom: 5px;">
+            <button type="submit" class="btn btn-primary" style="margin-top: 5px; margin-bottom: 5px;"> Search </button>
+            <input type="button" class="btn btn-secondary" value="Create" onclick="location.href='@Url.Action("Create", "products")'" style="margin-top: 5px; margin-bottom: 5px;" />
+        </div>
+    </form>
+</div>
+
+
+
+<table class="table table-striped">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Year
+        </th>
+        <th>
+            Price
+        </th>
+        <th>
+            Brand
+        </th>
+        <th>
+            Category
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.product_name
+            </td>
+            <td>
+                @item.model_year
+            </td>
+            <td>
+                @item.list_price
+            </td>
+            <td>
+                @item.brand.brand_name
+            </td>
+            <td>
+                @item.category.category_name
+            </td>
+            <td>
+                <button class="btn btn-primary" type="submit" onclick="location.href='@Url.Action("Edit", "products", new { id = item.product_id })'" style="margin-top: 5px; margin-bottom: 5px;"> Edit </button> |
+                <button class="btn btn-secondary" type="submit" onclick="Details(@item.product_id)" style="margin-top: 5px; margin-bottom: 5px;"> Details </button> |
+                <button class="btn btn-danger" type="submit" onclick="location.href='@Url.Action("Delete", "products", new { id = item.product_id })'" style="margin-top: 5px; margin-bottom: 5px;"> Delete </button>
+            </td>
+        </tr>
+    }
+</table>
+
+@Html.PagedListPager(Model, i => Url.Action("Index", "products", new { i, searchstring = Request.QueryString["searchstring"] }))
+
+<!-- Modal content-->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Details</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        function Details(id) {
+            $.get("@Url.Action("Details", "products")/" + id,
+                function (data) {
+                    $('.modal-body').html(data);
+                });
+                $("#myModal").modal("show");
+        }
+    </script>
+}
+
